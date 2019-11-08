@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>表单校验——服务端校验</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+    <div>
+        <form id="app" @submit="checkForm" method="post">
+            <p v-if="errors.length">
+                <b>Please correct the following error(s):</b>
+                <ul>
+                    <li v-for="error in errors">{{ error }}</li>
+                </ul>
+            </p>
+
+            <p>
+                <label  for="name" >New Product  Name:</label>
+                <input type="text" id="name" v-model= "name" name="name">
+            </p>
+
+            <p>
+                <input type="submit" value="submit">
+            </p>
+        </form>
+    </div>
+    <script> 
+        // function main(args){
+        //     return new Promise((resolve,reject) => {
+        //         //不好的产品名：vista,empire,mbp
+        //         const badNames = ['vista','empire','mbp'];
+
+        //         if(badNames.includes(args.name)){
+        //             reject({error: 'Existing product'});
+        //         }
+
+        //         resolve({status:'ok'});
+        //     })
+        // }
+        const apiUrl = 'https://openwhisk.ng.bluemix.net/api/v1/web/rcamden%40us.ibm.com_My%20Space/safeToDelete/productName.json?name=';
+        const app = new Vue({
+            el:'#app',
+            data:{
+                errors:[],
+                name:''
+            },
+            methods:{
+                checkForm:function(e){
+                    e.preventDefault();
+
+                    this.errors = [];
+
+                    if(this.name === ''){
+                        this.errors.push('Product name is required.');
+                    }else {
+                        fetch(apiUrl + encodeURIComponent(this.name))
+                        .then(res => res.json())
+                        .then(res => {
+                            if(res.error){
+                                this.errors.push(res.error);
+                            }else{
+                                //在成功的时候重定向到一个新的URL，或做一些别的事情
+                                alert('ok');
+                            }
+                        });
+                    }
+
+                }
+            }
+        })
+    </script>
+</body>
+</html>
+<!-- 
+    1.Fetch API
+    Fetch API 提供了一个 JavaScript接口，用于访问和操纵HTTP管道的部分，例如请求和响应。
+    它还提供了一个全局 fetch()方法，该方法提供了一种简单，合理的方式来跨网络异步获取资源。
+
+    当接收到一个代表错误的 HTTP 状态码时，从 fetch()返回的 Promise 不会被标记为 reject，
+    即使该 HTTP 响应的状态码是 404 或 500。相反，它会将 Promise 状态标记为 resolve 
+    （但是会将 resolve 的返回值的 ok 属性设置为 false ），仅当网络故障时或请求被阻止时，
+    才会标记为 reject。
+     
+     默认情况下，fetch 不会从服务端发送或接收任何 cookies, 如果站点依赖于用户 session，
+     则会导致未经认证的请求（要发送 cookies，必须设置 credentials 选项）。
+ -->

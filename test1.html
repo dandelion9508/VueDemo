@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>添加实例属性</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+    <h1>test1</h1>
+    <!-- <div id="app">
+        <ul  v-cloak v-for="user in users">
+            <li >{{ user.name }}</li>
+        </ul>
+    </div> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js"></script>
+    <script>
+        // 1.
+        // Vue.prototype.$appName = "My Test1 App";
+        // new Vue({
+        //     beforeCreate: function(){
+        //         console.log(this.$appName)
+        //     }
+        // })
+        
+        // 2.
+        // Vue.prototype.$http = axios;
+        // new Vue({
+        //     el: '#app',
+        //     data:{
+        //         users:[]
+        //     },
+        //     created(){
+        //         var vm = this
+        //         this.$http.get('http://jsonplaceholder.typicode.com/users')
+        //         .then(function(response){
+        //             vm.users = response.data
+        //         })
+        //     }
+        // })
+
+        // 3.
+        // Vue.prototype.$reverseText = function(propertyName){
+        //     this[propertyName] = this[propertyName]
+        //         .split('')
+        //         .reverse()
+        //         .join('')
+        // }
+
+        // new Vue({
+        //     data:{
+        //         message:'Hello'
+        //     },
+        //     created: function(){
+        //         console.log(this.message); //Hello
+        //         this.$reverseText('message')
+        //         console.log(this.message); //olleH
+        //     }
+        // })
+        // 注意如果你使用了 ES6/2015 的箭头函数，则其绑定的上下文不会正常工作，因为它们会隐式地绑定其父级作用域。也就是说使用箭头函数的版本：
+        // Vue.prototype.$reverseText = propertyName =>{
+        //     this[propertyName] = this[propertyName]
+        //         .split('')
+        //         .reverse()
+        //         .join('')
+        // }
+
+        // new Vue({
+        //     data:{
+        //         message:'Hello'
+        //     },
+        //     created: function(){
+        //         console.log(this.message); //Hello
+        //         this.$reverseText('message')
+        //         console.log(this.message); //olleH
+        //     }
+        // })
+        //         报错： [Vue warn]: Error in created hook: "TypeError: this[propertyName] is undefined"
+
+        // (found in <Root>) vue.js:634:17
+
+        
+        // 4.替代方案
+        var App = Object.freeze({
+            name:'My APP',
+            version:'2.1.4',
+            helpers:{
+                //这是我们之前见过的'$reverseText'方法的一个纯函数版本
+                reverseText: function(text){
+                    return text.split('').reverse().join('');
+                }
+            }
+
+        })
+        new Vue({
+            data:{
+                appVersion: App.version
+            },
+            // created: function(){
+            //     console.log(this.reverseText("zlm"))
+            // },
+            methods:{
+                reverseText: App.helpers.reverseText
+            }
+        })
+
+    </script>
+</body>
+</html>
+<!-- 
+    1. $是在vue所有实例中都可用的属性的一个简单约定。这样做会避免和已定义的数据、
+    方法、计算属性产生冲突。
+    2. v-cloak： 防止页面加载时出现 vuejs 的变量名。
+    4. Object.freeze,是阻止这个对象在未来被修改。实质上是将它的属性都设为了常量，避免在未来出现状态的bug
+
+ -->
