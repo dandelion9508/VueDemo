@@ -22,6 +22,7 @@ export default {
     
   },
   created(){
+    //get的两种方法
     // 请求路径https://localhost:8080/data.json?id=12
     axios.get('/data.json',{
         params:{
@@ -39,6 +40,76 @@ export default {
     }).then((res) => {
         console.log(res);
     })
-  }
+
+    //post
+    //form-data 表单提交，主要用于文件上传,图片上传
+    //applicition/json
+    let data = {
+      id: 12
+    }
+    //post别名方法
+    axios.post('/post',data).then
+    (res=>{
+      console.log(res)
+    })
+
+    axios({
+      method:'post',
+      url: '/post',
+      data: data
+    }).then(res => {
+      console.log(res);
+    })
+
+    //form-data请求
+    let formData = new FormData();
+    for(let key in data){
+      //将键值添加到formData
+      formData.append(key,data[key])
+    }
+    axios.post('/post',formData).then
+    (res=>{
+        console.log(res)
+    })
+
+    //put 请求
+    axios.put('/put',data).then(res=>{
+      console.log(res)
+    })
+
+    //patch请求
+    axios.patch('/patch',data).then(
+      res => {
+        console.log(res)
+      }
+    )
+
+    //delete请求,只有url和config参数
+    //参数直接放在url上
+    axios.delete('/delete',{
+      params:{
+        id: 12
+      }
+    }).then(res => {
+      console.log(res)
+    })
+     axios.delete('/delete',{
+      data:{
+        id: 12
+      }
+    }).then(res => {
+      console.log(res)
+    })
+
+    axios({
+      method:'delete',
+      url:'/delete',
+      params:{},
+      data:{}
+    }).then(res => {
+      console.log(res)
+    })
+
+  },
 }
 </script>
